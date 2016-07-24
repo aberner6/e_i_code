@@ -1,0 +1,40 @@
+
+<html>
+<head>
+	<title>Particle Login Example</title>
+</head>
+<body>
+	<script src="https://cdn.jsdelivr.net/particle-api-js/5/particle.min.js"></script>
+	<script>
+		var particle = new Particle();
+		particle.login({username: 'ciid.summer.school@gmail.com', password: 'buildtestrepeat'})
+			.then(function(result) {
+				console.log('Your access token', result.body.access_token);
+			}, function(err) {
+				console.error(err);
+			});
+       	var deviceID = "3f0031000547343337373737";//"<<hex device id here>>";
+        var accessToken = "593336c998dcdcc06ddf39a64b3b984c3747344e";//"<<hex access token here>>";
+        var eventSource = new EventSource("https://api.spark.io/v1/devices/" + deviceID + "/events/?access_token=" + accessToken);
+        eventSource.addEventListener('open', function(e) {
+            console.log("Opened!"); 
+            console.log(e);
+        },false);
+
+        eventSource.addEventListener('error', function(e) {
+            console.log("Errored!"); },false);
+
+        eventSource.addEventListener('Uptime', function(e) {
+            console.log("Hello!")
+            var parsedData = JSON.parse(e.data);
+            console.log(parsedData);
+            var tempSpan = document.getElementById("uptime");
+            var tsSpan   = document.getElementById("tstamp");
+            tempSpan.innerHTML = "Core: " + parsedData.coreid + " uptime: " + parsedData.data + " (h:m:s)";
+            tempSpan.style.fontSize = "28px";
+            tsSpan.innerHTML = "At timestamp " + parsedData.published_at;
+            tsSpan.style.fontSize = "9px";
+        }, false);
+	</script>
+</body>
+</html>

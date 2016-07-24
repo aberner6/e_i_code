@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+<script type="text/javascript" src="//cdn.jsdelivr.net/particle-api-js/5/particle.min.js">
+</script>
+<body>
+    <span id="uptime"></span><br>
+    <span id="tstamp"></span>
+
+    <br><br>
+    <button onclick="start()">Connect</button>
+
+    <script type="text/javascript">
+    function start() {
+
+        document.getElementById("uptime").innerHTML = "Waiting for data...";
+        var deviceID = "3f0031000547343337373737";//"<<hex device id here>>";
+        var accessToken = "593336c998dcdcc06ddf39a64b3b984c3747344e";//"<<hex access token here>>";
+        var eventSource = new EventSource("https://api.spark.io/v1/devices/" + deviceID + "/events/?access_token=" + accessToken);
+
+        eventSource.addEventListener('open', function(e) {
+            console.log("Opened!"); 
+            console.log(e);
+        },false);
+
+        eventSource.addEventListener('error', function(e) {
+            console.log("Errored!"); },false);
+
+        eventSource.addEventListener('photocell', function(e) {
+            console.log("hey")
+            var parsedData = JSON.parse(e.data);
+            console.log(parsedData);
+            var tempSpan = document.getElementById("uptime");
+            var tsSpan   = document.getElementById("tstamp");
+            tempSpan.innerHTML = "coreid: " + parsedData.coreid + " photocell reading: " + parsedData.data;
+            tempSpan.style.fontSize = "28px";
+            tsSpan.innerHTML = "At timestamp " + parsedData.published_at;
+            tsSpan.style.fontSize = "9px";
+        }, false);
+    }
+    </script>
+</body>
+</html>
